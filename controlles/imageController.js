@@ -1,22 +1,18 @@
-const Image = require('../models/imageSchema');
+const multer = require('multer');
 
-exports.uploadImage = (req, res) => {
-    const image = new Image({
-        name: req.file.originalname,
-        image: req.file.buffer,
-        contentType: req.file.mimetype,
-    });
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads/')
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + '-' + file.originalname)
+    }
+});
 
-    image.save()
-        .then(() => res.json({ message: 'Image uploaded successfully!' }))
-        .catch(err => res.status(400).json({ error: err }));
-};
+const upload = multer({ storage: storage });
 
-exports.getImage = (req, res) => {
-    Image.findById(req.params.id)
-        .then(image => {
-            res.set('Content-Type', image.contentType);
-            res.send(image.image);
-        })
-        .catch(err => res.status(400).json({ error: err }));
+exports.uploadImage = upload.single('image');
+
+exports.saveImage = (req, res) => {
+    res.json({ imageUrl: `/uploads/${req.file.filename}` });
 };
