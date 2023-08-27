@@ -20,23 +20,14 @@ exports.saveImage = (req, res) => {
 };
 
 
-exports.listImages = (req, res) => {
-    const uploadsDirectory = path.join(__dirname, '/uploads');
-    console.log(uploadsDirectory);
+exports.getAllImages = (req, res) => {
+    const uploadsDir = path.join(__dirname, '..', 'uploads');
+    const files = fs.readdirSync(uploadsDir);
 
-    fs.readdir(uploadsDirectory, (err, files) => {
-        if (err) {
-            return res.status(500).json({ error: 'Failed to retrieve images.' });
-        }
-        if (!fs.existsSync(uploadsDirectory)) {
-            return res.status(500).json({ error: `Directory does not exist: ${uploadsDirectory}` });
-        }
+    const images = files.map(filename => ({
+        filename,
+        url: `/uploads/${filename}`
+    }));
 
-        if (!fs.existsSync(uploadsDirectory)) {
-            return res.status(500).json({ error: `Directory does not exist: ${uploadsDirectory}` });
-        }
-        res.json(files);
-    });
-
-
+    res.json(images);
 };

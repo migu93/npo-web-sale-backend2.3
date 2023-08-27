@@ -4,6 +4,6 @@ const router = express.Router();
 
 router.post('/upload', imageController.uploadImage, imageController.saveImage);
 router.use('/uploads', express.static('uploads'));
-router.get('/get-list-images', imageController.listImages);
+router.get('/get-all', imageController.getAllImages);
 
 module.exports = router;
