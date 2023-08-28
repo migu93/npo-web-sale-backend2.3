@@ -1,6 +1,6 @@
-const multer = require('multer');
-const fs = require('fs');
-const path = require('path');
+const path = require("path");
+const fs = require("fs");
+const multer = require("multer");
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -17,27 +17,16 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-exports.uploadImage = upload.single('image');
+exports.advancedUploadImage = upload.single('image');
 
-exports.saveImage = (req, res) => {
-    res.json({ imageUrl: `/uploads/categories/${req.file.filename}` });
+exports.saveAdvancedImage = (req, res) => {
+    const resourceId = req.body.id || req.params.id;
+    res.json({ imageUrl: `/uploads/resources/${resourceId}/${req.file.filename}` });
 };
 
-exports.getAllImages = (req, res) => {
-    const uploadsDir = path.join(__dirname, '..', 'uploads');
-    const files = fs.readdirSync(uploadsDir);
-
-    const images = files.map(filename => ({
-        filename,
-        url: `/uploads/${filename}`
-    }));
-
-    res.json(images);
-};
-
-exports.getAllImagesFromFolder = (req, res) => {
-    const folderName = req.params.folderName;
-    const folderPath = path.join(__dirname, '..', 'uploads', folderName);
+exports.getAllImagesFromResource = (req, res) => {
+    const resourceId = req.params.id;
+    const folderPath = path.join(__dirname, '..', 'uploads', 'resources', resourceId);
 
     if (!fs.existsSync(folderPath)) {
         return res.status(404).json({ message: "Folder not found" });
@@ -47,7 +36,7 @@ exports.getAllImagesFromFolder = (req, res) => {
 
     const images = files.map(filename => ({
         filename,
-        url: `/uploads/${folderName}/${filename}`
+        url: `/uploads/resources/${resourceId}/${filename}`
     }));
 
     res.json(images);
