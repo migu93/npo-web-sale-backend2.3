@@ -48,3 +48,24 @@ exports.deleteProduct = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+exports.getProductsByCategory = async (req, res) => {
+    try {
+        const categoryId = req.params.categoryId;
+
+        if (!categoryId) {
+            return res.status(400).json({ message: 'Category ID is required' });
+        }
+
+        const products = await Product.find({ category: categoryId }).populate('category');
+
+        if (!products.length) {
+            return res.status(404).json({ message: 'No products found for this category' });
+        }
+
+        res.json(products);
+    } catch (error) {
+        console.error('Error fetching products by category:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
