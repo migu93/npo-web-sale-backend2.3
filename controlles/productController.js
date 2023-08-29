@@ -1,4 +1,6 @@
 const Product = require('../models/productSchema');
+const Category = require('../models/categorySchema');
+
 
 exports.getAllProducts = async (req, res) => {
     try {
@@ -66,6 +68,35 @@ exports.getProductsByCategory = async (req, res) => {
         res.json(products);
     } catch (error) {
         console.error('Error fetching products by category:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+exports.getProductsByCategoryUrl = async (req, res) => {
+    try {
+        const categoryUrl = req.params.categoryUrl;
+
+        if (!categoryUrl) {
+            return res.status(400).json({ message: 'Category URL is required' });
+        }
+
+        // Находим категорию по categoryUrl
+        const category = await Category.findOne({ categoryUrl: `/${categoryUrl}` });
+
+        if (!category) {
+            return res.status(404).json({ message: 'Category not found' });
+        }
+
+        // Теперь находим все товары для этой категории
+        const products = await Product.find({ category: category._id }).populate('category');
+
+        if (!products.length) {
+            return res.status(404).json({ message: 'No products found for this category' });
+        }
+
+        res.json(products);
+    } catch (error) {
+        console.error('Error fetching products by category URL:', error);
         res.status(500).json({ message: 'Server error' });
     }
 };
