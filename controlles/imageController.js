@@ -4,7 +4,8 @@ const path = require('path');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const uploadPath = './uploads/categories'; // Здесь указан путь к подпапке
+        const folderName = req.params.folderName || 'default';
+        const uploadPath = `./uploads/${folderName}`; // Здесь указан путь к подпапке
         if (!fs.existsSync(uploadPath)) {
             fs.mkdirSync(uploadPath, { recursive: true });
         }

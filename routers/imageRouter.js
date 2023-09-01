@@ -7,5 +7,5 @@ router.use('/uploads', express.static('uploads'));
 router.get('/get-all', imageController.getAllImages);
 router.get('/get-all/:folderName', imageController.getAllImagesFromFolder);
 router.post('/upload/categories', imageController.uploadImage, imageController.saveImage);
-
+router.post('/upload/:folderName', imageController.uploadImage, imageController.saveImage);
 module.exports = router;
