@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 5001;
 const graphqlSetup = require('./graphqlSetup')
 const productRouter = require('./routers/productRouter')
 const productImageRouter = require('./routers/ProductImageRouter')
+const newsRouter = require('./routers/newsRouter')
 
 const app = express();
 app.use(cors())
@@ -17,6 +18,7 @@ app.use('/uploads', express.static('uploads'));
 app.use('/images', imageRouter);
 app.use('/api/products', productRouter);
 app.use('/images/products', productImageRouter);
+app.use('/news', newsRouter);
 
 // Настройка GraphQL
 graphqlSetup(app);
