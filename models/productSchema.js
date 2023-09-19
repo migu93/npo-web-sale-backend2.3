@@ -31,7 +31,27 @@ const productSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
         required: true
-    }
+    },
+    price: {
+        type: Number,
+        required: true
+    },
+    inStock: {
+        type: Boolean,
+        required: true,
+        default: true
+    },
+
+    characteristics: [{
+        key: {
+            type: String,
+            required: false
+        },
+        value: {
+            type: String,
+            required: false
+        }
+    }]
 });
 
 module.exports = model('Product', productSchema);

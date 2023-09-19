@@ -1,3 +1,4 @@
+const BodyParser = require("body-parser");
 const express = require('express');
 const categoryRouter = require('./routers/categoryRouter');
 const imageRouter = require('./routers/imageRouter')
@@ -19,7 +20,7 @@ app.use('/images', imageRouter);
 app.use('/api/products', productRouter);
 app.use('/images/products', productImageRouter);
 app.use('/news', newsRouter);
-
+app.use(BodyParser.json());
 // Настройка GraphQL
 graphqlSetup(app);
 
