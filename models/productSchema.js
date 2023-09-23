@@ -34,11 +34,11 @@ const productSchema = new Schema({
     },
     price: {
         type: Number,
-        required: true
+        required: false
     },
     inStock: {
         type: Boolean,
-        required: true,
+        required: false,
         default: true
     },
 
