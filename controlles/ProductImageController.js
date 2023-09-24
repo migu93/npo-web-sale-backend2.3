@@ -4,24 +4,51 @@ const multer = require("multer");
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const uploadPath = './uploads/categories'; // Здесь указан путь к подпапке
+        const uploadPath = './uploads/resources';  // Обновленный путь
         if (!fs.existsSync(uploadPath)) {
             fs.mkdirSync(uploadPath, { recursive: true });
         }
         cb(null, uploadPath);
     },
     filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname)
+        cb(null, Date.now() + '-' + file.originalname);
     }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage: storage }).fields([
+    { name: 'image', maxCount: 1 },
+    { name: 'additionalImages', maxCount: 10 }
+]);
 
-exports.advancedUploadImage = upload.single('image');
+exports.advancedUploadImage = (req, res, next) => {
+    upload(req, res, function (err) {
+        if (err instanceof multer.MulterError) {
+            return res.status(500).json(err);
+        } else if (err) {
+            return res.status(500).json(err);
+        }
+        next();
+    });
+};
 
 exports.saveAdvancedImage = (req, res) => {
     const resourceId = req.body.id || req.params.id;
-    res.json({ imageUrl: `/uploads/resources/${resourceId}/${req.file.filename}` });
+    let response = {};
+
+    if (req.files) {
+        if (req.files.image) {
+            response.imageUrl = `/uploads/resources/${resourceId}/${req.files.image[0].filename}`;
+        }
+        if (req.files.additionalImages) {
+            response.additionalImageUrls = req.files.additionalImages.map(file => `/uploads/resources/${resourceId}/${file.filename}`);
+        }
+    }
+
+    if (Object.keys(response).length === 0) {
+        res.json({ message: 'No images uploaded' });
+    } else {
+        res.json(response);
+    }
 };
 
 exports.getAllImagesFromResource = (req, res) => {

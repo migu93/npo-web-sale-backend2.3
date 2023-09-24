@@ -9,6 +9,7 @@ const graphqlSetup = require('./graphqlSetup')
 const productRouter = require('./routers/productRouter')
 const productImageRouter = require('./routers/ProductImageRouter')
 const newsRouter = require('./routers/newsRouter')
+const fileManager = require('./controlles/fileManager')
 
 const app = express();
 app.use(cors())
@@ -20,6 +21,7 @@ app.use('/images', imageRouter);
 app.use('/api/products', productRouter);
 app.use('/images/products', productImageRouter);
 app.use('/news', newsRouter);
+app.use('/api/filemanager', fileManager);
 app.use(BodyParser.json());
 // Настройка GraphQL
 graphqlSetup(app);
