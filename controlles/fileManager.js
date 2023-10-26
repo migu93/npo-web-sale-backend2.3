@@ -9,8 +9,8 @@ const rootFolder = path.join(__dirname, '..', 'uploads');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const folder = req.body.folder || "uploads";
-        const folderPath = path.join(__dirname, folder);
+        const folder = req.query.folder || "uploads"; // Изменено с req.body на req.query
+        const folderPath = path.join(__dirname, '..', 'uploads', folder); // Добавлен корневой путь
 
         if (!fs.existsSync(folderPath)) {
             fs.mkdirSync(folderPath, { recursive: true });
@@ -23,12 +23,18 @@ const storage = multer.diskStorage({
     },
 });
 
+
+
 const upload = multer({ storage: storage });
 
-// Upload File
 router.post("/upload", upload.single("file"), (req, res) => {
-    res.status(200).json({ message: "File uploaded" });
+    if (req.file) {
+        res.status(200).json({ message: "File uploaded" });
+    } else {
+        res.status(400).json({ message: "No file provided" });
+    }
 });
+
 
 // Get Files in Folder
 router.get("/files", (req, res) => {

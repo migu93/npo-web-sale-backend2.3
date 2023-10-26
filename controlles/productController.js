@@ -100,3 +100,15 @@ exports.getProductsByCategoryUrl = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+exports.searchProducts = async (req, res) => {
+    const searchTerm = req.query.q;
+    try {
+        const products = await Product.find({
+            title: new RegExp(searchTerm, 'i')
+        });
+        res.json(products);
+    } catch (error) {
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
